@@ -1,0 +1,49 @@
+h1, h2, h3, h4, h5, h6 {
+font-weight: bold;
+}
+.alert {
+margin-top: 10px;
+}
+#footer {
+border-top: 1px solid #dddddd;
+padding-top: 10px;
+}
+
+
+textarea,
+select,
+input {
+max-width: 300px;
+}
+
+
+
+#user-toolbar {
+margin-top: 30px;
+text-align: right;
+}
+
+#h3 {
+margin-top: 30px;
+margin-left: 300px;
+}
+
+
+
+.chat-messages {
+    height: 400px;
+    width: 70%;
+    margin: 20px 0;
+    overflow: auto;
+}
+.chat-messages .message {
+    margin: 10px 0;
+}
+.chat-messages address {
+    display: inline-block;
+    font-weight: bold;
+    margin-right: 10px
+}
+.chat-messages address:after {
+    content: ':';
+}

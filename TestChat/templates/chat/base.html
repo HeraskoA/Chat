@@ -1,0 +1,87 @@
+{% load static from staticfiles %}
+<!DOCTYPE html>
+<html lang="uk">
+	<head>
+    		<meta charset="UTF-8"/>
+    		<title>Chat</title>
+        	<meta name="description" value ="Chat"/>
+    	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="{{ PORTAL_URL }}{% static 'css/main.css' %}">
+	</head>
+	<body>
+		<!-- Start Container -->
+		<div class="container">
+		<!-- Start Header -->
+			<div class="row" id="header">
+				<!-- Logo -->
+				<div class="col-xs-8">
+					<h1><a href="{% url 'home' %}">Chat</h1>
+				</div>
+				<!-- Groups Selector -->
+				{% if user.is_authenticated %}
+				<!-- User's toolbar for authenticated users -->
+				<div class="col-xs-2" id="user-toolbar">
+				{{ user.username }} | <a href="{% url 'users:auth_logout' %}">Logout</a>
+				</div>
+				{% else %}
+				<div class="col-xs-4" id="user-toolbar">
+					<a href="{% url 'users:auth_login' %}">Login</a> |
+					<a href="{% url 'users:registration_register' %}">Register</a>
+				</div>
+				{% endif %}
+			</div>
+		<!-- End Header -->
+    		<!-- Start Main Page Content -->
+		<hr>
+		<div class="row" id="content-columns">
+			<div class="col-xs-8" id="content-column">
+				{% block content %}
+				{% if user.is_authenticated %}
+				<div id="h3">
+					<h3>Выберите собеседника -></h3>
+				</div>
+				{% else %}
+				<h3>Чтобы воспользоваться чатом войдите или зарегистрируйтесь</h3>
+				{% endif %}
+				{% endblock content %}
+			</div>
+			<div class="col-xs-4">
+				<table class="table table-hover table-striped" id="userstable">
+        				<thead>
+        					<tr>
+							<th>Пользователи</th>
+						</tr>
+        				</thead>
+        				<tbody>
+						{% for userr in users %}
+        					<tr>
+							<td>
+							{% if user.is_authenticated and user.username != userr.username %}
+							<a title="Change" href="{% url 'dialog' userr.id %}">{{ userr.username }}</a>
+						{% else %}
+						{{ userr.username }}
+						{% endif %} 
+							</td>
+ 						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+   
+			</div>
+		</div>
+		<!-- End Main Page Content -->
+		<!-- Start Footer -->
+		<div class="row" id="footer">
+			<div class="col-xs-12">
+				&copy; 2016 Chat
+			</div>
+		</div>
+		<!-- End Footer -->
+		</div>
+	<script src="https://code.jquery.com/jquery-2.2.4.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
+	<script src="{% static 'js/main.js' %}"></script>
+	</body>
+</html>

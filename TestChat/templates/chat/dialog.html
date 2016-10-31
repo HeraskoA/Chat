@@ -1,0 +1,23 @@
+{% extends "chat/base.html" %}
+{% block meta_title %}Chat{% endblock meta_title %}
+{% block title %}Chat{% endblock title %}
+{% block content %}
+<h3>{{interlocutor}}</h3>
+	<div id="chat-messages" class="chat-messages well">
+        	<div class="message">
+			{% for mes in messages %}
+                	<p><address>{{ mes.sender }}</address>
+				<span>{{ mes.text }}</span>
+ 			{% endfor %}
+                </div>
+            
+	</div>
+	<form action="{{ request.path }}" method="post">
+	{% csrf_token %}
+		<div class="form-group">
+			<label for="exampleTextarea">Сообщение</label>
+			<textarea class="form-control" name="mess" id="exampleTextarea" rows="3"></textarea>
+		</div>
+	<button id="ch" type="submit" class="btn btn-primary">Submit</button>
+	</form>
+{% endblock content %}
