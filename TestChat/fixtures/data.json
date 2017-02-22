@@ -1,9 +1,9 @@
 [
 {
 "fields": {
-"username": "admin1",
-"first_name": "",
-"last_name": "",
+"username": "admin",
+"first_name": "qw",
+"last_name": "wqt",
 "is_active": true,
 "is_superuser": true,
 "is_staff": true,
@@ -20,8 +20,8 @@
 {
 "fields": {
 "username": "admin2",
-"first_name": "",
-"last_name": "",
+"first_name": "yr",
+"last_name": "wys",
 "is_active": true,
 "is_superuser": false,
 "is_staff": true,

@@ -1,52 +1,70 @@
 from django.shortcuts import render
+from datetime import time
 from django.contrib.auth.models import User
-from TestChat.models import Dialog, Message, NumberMessages
+from TestChat.models import Dialog, Message, UserPhoto
+from django.views.generic import UpdateView
 import json
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
 from django.core import serializers
-from django.views.generic.base import TemplateView
+from django import forms
+from TestChat.forms import UserForm, ProfileForm
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 
 
-# Create your views here.
 def home(request):
     return render(request, 'chat/base.html', {})
 
+@login_required
+def ProfileView(request):
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, request.FILES, instance=request.user.userphoto)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            return HttpResponseRedirect(reverse('home'))
+        else:
+            return render(request, 'chat/profile.html', {
+                'user_form': user_form,
+                'profile_form': profile_form
+            })
+    else:
+        user_form = UserForm(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.userphoto)
+    return render(request, 'chat/profile.html', {
+        'user_form': user_form,
+        'profile_form': profile_form
+    })
 
+@login_required
 def dialog(request, pk):
-    user = request.user
-    user_id = int(pk)
+    user1 = request.user
+    user2 = User.objects.get(id=int(pk))
     try:
-        dialog = Dialog.objects.get(user1=user, user2=User.objects.get(id=user_id))
+        dialog = Dialog.objects.get(user1=user1, user2=user2)
     except Exception:
-        try:
-            dialog = Dialog.objects.get(user1=User.objects.get(id=user_id), user2=user)
-        except Exception:
-            dialog = Dialog(user1=user, user2=User.objects.get(id=user_id))
-            dialog.save()
+        dialog, created = Dialog.objects.get_or_create(user1=user2, user2=user1)
     if request.is_ajax():
         response_data = []
         if request.method == 'POST':
             text = request.POST.get('mess')
-            if text != '':
-                message = Message(text=text, sender=user, dialog=dialog)
-                message.save()
-	messages = Message.objects.filter(dialog=dialog)
-	num_mess = NumberMessages.objects.get(user = user, dialog = dialog)
-	number = num_mess.number
-	if number != len(messages):
-		num_mess.number = len(messages)
-		num_mess.save()
-		messages = messages[(len(messages) - number):]
-		for message in messages:
-           		response_data.append({'text': message.text, 'sender': message.sender.username})	  
-        return HttpResponse(json.dumps(response_data), content_type="application/json")
+            Message.objects.create(text=text, sender=user1, dialog=dialog)
+            return HttpResponse(json.dumps(0))
+        else:
+            count = int(request.GET.get('count'))
+            messages = Message.objects.filter(dialog=dialog)
+            if count != len(messages):
+                messages = messages[count:]
+                for message in messages:
+                    response_data.append({
+                        'text': message.text,
+                        'sender': message.sender.username,
+                        'time': time.strftime(message.date, "%H:%M")
+                    })
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
     else:
-        interlocutor = User.objects.get(id=user_id)
         messages = Message.objects.filter(dialog=dialog)
-	number_of_messages, created = NumberMessages.objects.get_or_create(user = user, dialog = dialog)
-	number_of_messages.number = len(messages)
-	number_of_messages.save()
-        return render(request, 'chat/dialog.html', {'messages': messages, 'interlocutor': interlocutor})
-
-
-
+        count = len(messages)
+        return render(request, 'chat/dialog.html', {'messages': messages, 'interlocutor': user2, 'count': count})

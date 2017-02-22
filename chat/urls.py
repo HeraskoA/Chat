@@ -5,6 +5,7 @@ from TestChat import views
 from django.views.generic.base import RedirectView
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
+import settings
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -15,6 +16,7 @@ urlpatterns = patterns('',
 
 	#url(r'^dialog/', views.dialog, name='dialog' ),
 	url(r'^dialog/(?P<pk>\d+)/$', views.dialog, name='dialog' ),
+	url(r'^profile/$', views.ProfileView, name='profile' ),
 
 url(r'^users/logout/$', auth_views.logout, kwargs={'next_page': 'home'}, name='auth_logout'),
 url(r'^register/complete/$', RedirectView.as_view(pattern_name='home'), name='registration_complete'),
@@ -22,3 +24,5 @@ url(r'^users/', include('registration.backends.simple.urls', namespace='users'))
 
     url(r'^admin/', include(admin.site.urls)),
 )
+
+urlpatterns += patterns('', url(r'^uploads/(?P<path>.*)$','django.views.static.serve', {'document_root': settings.MEDIA_ROOT}))

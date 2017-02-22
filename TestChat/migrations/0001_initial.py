@@ -14,7 +14,7 @@ class Migration(SchemaMigration):
             ('text', self.gf('django.db.models.fields.CharField')(max_length=256)),
             ('sender', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True)),
             ('dialog', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['TestChat.Dialog'], null=True)),
-            ('date', self.gf('django.db.models.fields.DateField')(auto_now_add=True, blank=True)),
+            ('date', self.gf('django.db.models.fields.TimeField')(auto_now_add=True, blank=True)),
         ))
         db.send_create_signal(u'TestChat', ['Message'])
 
@@ -26,14 +26,13 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'TestChat', ['Dialog'])
 
-        # Adding model 'NumberMessages'
-        db.create_table(u'TestChat_numbermessages', (
+        # Adding model 'UserPhoto'
+        db.create_table(u'TestChat_userphoto', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('number', self.gf('django.db.models.fields.IntegerField')(max_length=256)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('dialog', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['TestChat.Dialog'])),
+            ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
+            ('photo', self.gf('django.db.models.fields.files.ImageField')(max_length=100, null=True, blank=True)),
         ))
-        db.send_create_signal(u'TestChat', ['NumberMessages'])
+        db.send_create_signal(u'TestChat', ['UserPhoto'])
 
 
     def backwards(self, orm):
@@ -43,8 +42,8 @@ class Migration(SchemaMigration):
         # Deleting model 'Dialog'
         db.delete_table(u'TestChat_dialog')
 
-        # Deleting model 'NumberMessages'
-        db.delete_table(u'TestChat_numbermessages')
+        # Deleting model 'UserPhoto'
+        db.delete_table(u'TestChat_userphoto')
 
 
     models = {
@@ -56,18 +55,17 @@ class Migration(SchemaMigration):
         },
         u'TestChat.message': {
             'Meta': {'object_name': 'Message'},
-            'date': ('django.db.models.fields.DateField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'date': ('django.db.models.fields.TimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'dialog': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['TestChat.Dialog']", 'null': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'sender': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'null': 'True'}),
             'text': ('django.db.models.fields.CharField', [], {'max_length': '256'})
         },
-        u'TestChat.numbermessages': {
-            'Meta': {'object_name': 'NumberMessages'},
-            'dialog': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['TestChat.Dialog']"}),
+        u'TestChat.userphoto': {
+            'Meta': {'object_name': 'UserPhoto'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'number': ('django.db.models.fields.IntegerField', [], {'max_length': '256'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
+            'photo': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['auth.User']", 'unique': 'True'})
         },
         u'auth.group': {
             'Meta': {'object_name': 'Group'},

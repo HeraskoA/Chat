@@ -1,16 +1,28 @@
 {% extends "chat/base.html" %}
+{% load staticfiles %}
 {% block meta_title %}Chat{% endblock meta_title %}
 {% block title %}Chat{% endblock title %}
+{% block extra_head %}
+	<script src="{% static 'js/main.js' %}"></script>
+        <script type="text/javascript">
+       var count = {{ count }}
+        </script>
+{% endblock extra_head %}
 {% block content %}
-<h3>{{interlocutor}}</h3>
+				{% if interlocutor.userphoto.photo %}
+				<img class="img-circle" src="{{ interlocutor.userphoto.photo.url }}" height="50" width="50" />
+				{% else %}
+				<img class="img-circle" src="{% static 'img/anon.jpg' %}" height="50" width="50" />
+				{% endif %}
+<strong id='interlocutor'>  {{interlocutor}}</strong>
 	<div id="chat-messages" class="chat-messages well">
         	<div class="message">
 			{% for mes in messages %}
                 	<p><address>{{ mes.sender }}</address>
 				<span>{{ mes.text }}</span>
+				<div id='date'>{{ mes.date|date:"G:i" }}</div>
  			{% endfor %}
-                </div>
-            
+                </div>   
 	</div>
 	<form action="{{ request.path }}" method="post">
 	{% csrf_token %}

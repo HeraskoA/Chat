@@ -28,8 +28,12 @@ TEMPLATE_DEBUG = True
 ALLOWED_HOSTS = []
 
 PORTAL_URL = 'http://localhost:8000'
-MEDIA_URL = '/media/'
+
 REGISTRATION_OPEN = True
+
+
+LOGIN_URL = 'users:auth_login'
+LOGOUT_URL = 'users:auth_logout'
 # Application definition
 
 INSTALLED_APPS = (
@@ -67,27 +71,14 @@ WSGI_APPLICATION = 'chat.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-"""
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-"""
-DATABASES = {
-	'default': {
-	'ENGINE': 'django.db.backends.mysql',
-	'HOST': 'localhost',
-	'USER': 'root',
-	'PASSWORD': '',
-	'NAME': 'chat',
-	'TEST': {
-		'CHARSET': 'utf8',
-		'COLLATION': 'utf8_general_ci',
-		}
-	}
-}
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
@@ -101,6 +92,15 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Upload Media
+# Absolute filesystem path to the directory that will hold user-uploaded files.
+# Example: "/home/media/media.lawrence.com/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, '..', 'uploads')
+
+# URL that handles the media served from MEDIA_ROOT. Make sure to use a
+# trailing slash.
+# Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
+MEDIA_URL = '/uploads/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
